@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Request {
+  id        String     @id @default(uuid())
+  method    String
+  url       String
+  headers   Json
+  body      String?
+  createdAt DateTime   @default(now())
+
+  responseId String?   @unique
+
+  response   Response? @relation(fields: [responseId], references: [id])
+}
+
+model Response {
+  id        String   @id @default(uuid())
+  requestId String   @unique
+  status    Int
+  headers   Json
+  body      String?
+  createdAt DateTime @default(now())
+
+  requests Request?
+}
+
+model ResponseTemplate {
+  id        String   @id @default(uuid())
+  name      String
+  url       String
+  method    String
+  status    Int
+  headers   Json?
+  body      String?
+  timeout   Int
+  createdAt DateTime @default(now())
+}
